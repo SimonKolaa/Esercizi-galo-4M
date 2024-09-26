@@ -1,0 +1,20 @@
+class ContoBancario:
+    def __init__(self, intestatario, saldo, numero_conto):
+        self.intestatario = intestatario
+        self.saldo = saldo
+        self.numero_conto = numero_conto
+        
+ 
+    def get_saldo(self):
+            return self.__saldo  #Metodo pubblico per accedere a un attributo privato
+
+    def deposita(self, saldo):
+            self.__saldo += saldo  #Metodo pubblico per modificare un attributo privato
+
+    def preleva(self, saldo):
+            self.__saldo -= saldo  #Metodo pubblico per modificare un attributo privato
+
+ContoBancario1 = ContoBancario("123456789", "Luciano Moggi", 1000.0)
+print(ContoBancario1.intestatario)
+print(ContoBancario1.saldo)
+print(ContoBancario1.numero_conto)
