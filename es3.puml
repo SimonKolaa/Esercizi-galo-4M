@@ -1,0 +1,7 @@
+@startuml Veicolo
+class Veicolo {
+   + numero_veicoli : int
+   + get_numero_veicoli() : int
+}
+
+@enduml
