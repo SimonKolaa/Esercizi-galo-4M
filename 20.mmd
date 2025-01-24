@@ -1,0 +1,24 @@
+   class Prodotto
+     {
+        -str id_prodotto
+        -str nome
+        -str descrizione
+        -float prezzo
+        -str categoria
+        -list[Recensione] recensioni
+        +get_dettagli()
+        +aggiorna_prodotto()
+    }
+
+    class Cliente {
+        -str id_cliente
+        -str nome
+        -str cognome
+        -str email
+        -str indirizzo
+        -list[Ordine] ordini
+        -list[Recensione] recensioni
+        +get_info()
+        +aggiungi_ordine()
+        +aggiungi_recensione()
+    }
