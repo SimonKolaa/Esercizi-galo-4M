@@ -48,11 +48,100 @@ flowchart TD
 
 # Informatica Appunti 14/02/2025
 
+## Uso dei Tipi di Dato in Mermaid
+# Tipi di Dato Base
+```mermaid
+classDiagram
+    class Esempio {
+        +str nome
+        +int eta
+        +float peso
+        +bool attivo
+        +datetime data
+    }
+```
+# Spiegazione dei Tipi
+**str**: per le stringhe di testo
+```mermaid
+classDiagram
+    class Persona {
+        +str nome
+        +str cognome
+        +str codiceFiscale
+    }
+```
+**int**: per i numeri interi
+```mermaid
+classDiagram
+    class Prodotto {
+        +int quantita
+        +int codice
+        +int anno
+    }
+```
+**float**: per i numeri decimali
+```mermaid
+classDiagram
+    class Misurazione {
+        +float temperatura
+        +float pressione
+        +float umidita
+    }
+```
+# Liste e Tipi Complessi
+```mermaid
+classDiagram
+    class Classe {
+        +list[str] nomi
+        +list[int] voti
+        +list[Studente] studenti
+        +dict[str, float] medie
+    }
+```
+# Esempio Pratico Completo
+```mermaid
+classDiagram
+    class Studente {
+        +str nome
+        +str cognome
+        +int matricola
+        +float media
+        +list[int] voti
+        +bool promosso
+    }
+
+    class Corso {
+        +str nome
+        +int codice
+        +list[Studente] iscritti
+        +float mediaClasse
+        +dict[str, float] statistiche
+    }
+```
+Regole da Ricordare
+**Usare str per testo**
+
+**Usare int per numeri interi**
+
+**Usare float per numeri decimali**
+
+**Usare bool per vero/falso**
+
+**Usare list[tipo] per liste**
+
+**Usare dict[chiave, valore] per dizionari**
+
+**Usare datetime per date e orari**
+
+
+
 ## Associazioni
 
 **1-n:** una lista nella classe principale e un attributo nell'altra.
 
 Nelle associazioni, dipende dal verbo il senso dell'associazione (contiene, ecc.). Leggendo la cardinalità, posso capire dai due sensi come fare l'associazione.
+
+va messo sempre **```mermaid classDiagram**
 
 **Esempio: tradurre VisitaVeterinaria da Animale**
 
@@ -498,6 +587,91 @@ classDiagram
    - `prendiInPrestito(libro)`: Permette a un utente di prendere in prestito un libro disponibile.
    - `restituisciLibro(libro)`: Permette a un utente di restituire un libro in prestito.
 
+### Esercizio
+```mermaid
+classDiagram
+
+    Corso "1" -- "1" Quiz : ha
+    Studente "*" -- "*" Corso : è iscritto
+    Quiz "1" -- "*" Domanda : contiene
+    Quiz "1" -- "*" QuizAttempt : ha
+    Studente "1" -- "*" QuizAttempt : effettua
+
+    class Corso {
+        +str titolo
+        +str descrizione
+        +str docente
+        +Quiz quiz
+        +list[Studente] iscritti
+        +void impostaQuiz(Quiz quiz)
+        +bool iscriviStudente(Studente studente)
+    }
+
+    class Studente {
+        +str nome
+        +str cognome
+        +str email
+        +list[Corso] corsiIscritti
+        +list[QuizAttempt] tentativi
+    }
+
+    class Quiz {
+        +str titolo
+        +list[Domanda] domande
+        +int punteggioMinimo
+        +int valutaRisposte(list[int] risposte)
+        +bool verificaSuperamento(int punteggio)
+    }
+
+    class Domanda {
+        +str testo
+        +list[str] opzioni
+        +int rispostaCorretta
+        +bool verificaRisposta(int risposta)
+    }
+
+    class QuizAttempt {
+        +DateTime dataOra
+        +Quiz quiz
+        +Studente studente
+        +list[int] risposte
+        +int punteggio
+        +bool superato
+        +QuizAttempt(Quiz quiz, Studente studente)
+        +void submitRisposte(list[int] risposte)
+        +int calcolaPunteggio()
+    }
+```
+
+## Commento
+
+### `Quiz.valutaRisposte(list[int]) int`
+
+1. Riceve una lista di risposte (numeri interi)
+2. Itera attraverso ogni risposta e la corrispondente domanda
+3. Per ogni coppia risposta-domanda, verifica se la risposta è corretta usando `Domanda.verificaRisposta()`
+4. Somma i punti per le risposte corrette
+5. Restituisce il punteggio totale
+
+### `QuizAttempt.submitRisposte(list[int]) void`
+
+1. Memorizza la lista di risposte nell'attributo `risposte`
+2. Chiama `calcolaPunteggio()` per valutare le risposte
+3. Verifica se il quiz è stato superato con `quiz.verificaSuperamento(punteggio)`
+4. Aggiorna l'attributo `superato`
+
+### `QuizAttempt.calcolaPunteggio() int`
+
+1. Passa le risposte registrate al metodo `quiz.valutaRisposte(this.risposte)`
+2. Memorizza il risultato nell'attributo `punteggio`
+3. Restituisce il punteggio
+
+### `Corso.iscriviStudente(Studente) bool`
+
+1. Verifica se lo studente è già iscritto al corso
+2. Se non è iscritto, aggiunge lo studente alla lista `iscritti`
+3. Aggiorna anche la lista `corsiIscritti` dello studente
+4. Restituisce `true` se l'iscrizione è avvenuta con successo
 
 # Metodi nelle Classi
 
@@ -590,5 +764,113 @@ classDiagram
     }
 ```
 
-Con questi esempi hai una guida completa su come interpretare e progettare i metodi nelle classi UML!
+### Esempio Mermaid
+
+## 2. Relazioni tra le classi
+
+- **Corso "1" → "1" Quiz** → Ogni corso ha un solo quiz.
+- **Studente "*" → "*" Corso** → Uno studente può frequentare più corsi e ogni corso può avere più studenti.
+- **Quiz "1" → "*" Domanda** → Un quiz è composto da più domande.
+
+Queste relazioni descrivono la struttura logica del sistema.
+
+---
+
+## 3. Classi e loro dettagli
+
+### **Classe `Domanda`**
+Rappresenta una domanda del quiz con le seguenti proprietà:
+
+```mermaid
+classDiagram
+class Domanda {
+    +String testo
+    +list[str] risposte
+    +int risposta_corretta
+    +__init__(String testo, list[str] risposte, int risposta_corretta)
+}
+```
+- **`testo`** → Il testo della domanda.
+- **`risposte`** → Una lista di opzioni tra cui scegliere.
+- **`risposta_corretta`** → Indice della risposta corretta nella lista delle opzioni.
+- **`__init__()`** → Metodo costruttore per creare una domanda.
+
+### **Classe `Studente`**
+Rappresenta uno studente con le seguenti proprietà:
+
+```mermaid
+classDiagram
+class Studente {
+    +String nome
+    +list[Corso] corso
+    +__init__(String nome)
+    %% +aggiungiCorso(Corso corso)
+}
+```
+- **`nome`** → Nome dello studente.
+- **`corso`** → Lista di corsi ai quali lo studente è iscritto.
+- **`__init__()`** → Metodo costruttore per creare uno studente.
+- **`aggiungiCorso()`** *(commentato)* → Metodo per iscrivere lo studente a un corso.
+
+### **Classe `Corso`**
+Definisce un corso con quiz e studenti iscritti:
+
+```mermaid
+classDiagram
+class Corso {
+    +String titolo
+    +String descrizione
+    +String docente
+    +Quiz quiz
+    +list[Studente] studenti
+    +__init__(String titolo, String descrizione, String docente)
+    %% aggiungiStudente agisce anche sull'oggetto
+    %% studente inserendo il corso nella lista
+    +aggiungiStudente(Studente studente)
+    +aggiungiQuiz(Quiz quiz)
+}
+```
+- **`titolo`** → Nome del corso.
+- **`descrizione`** → Breve descrizione del corso.
+- **`docente`** → Nome del docente responsabile.
+- **`quiz`** → Il quiz associato al corso.
+- **`studenti`** → Lista di studenti iscritti.
+- **`__init__()`** → Costruttore per creare un corso.
+- **`aggiungiStudente()`** → Aggiunge uno studente al corso e aggiorna la lista corsi dello studente.
+- **`aggiungiQuiz()`** → Assegna un quiz al corso.
+
+### **Classe `Quiz`**
+Gestisce l'insieme delle domande:
+
+```mermaid
+classDiagram
+class Quiz {
+    +String nome
+    +list[Domanda] domande
+    %% %% SOLUZIONE 1
+    %% +__init__(String nome, list[Domanda] domande)
+    %% SOLUZIONE 2
+    +__init__(String nome)
+    +aggiungiDomanda(Domanda domanda)
+    %% %% SOLUZIONE 3
+    %% +__init__(String nome)
+    %% +aggiungiDomanda(String testo, list[str] risposte, int risposta_corretta)
+}
+```
+- **`nome`** → Nome del quiz.
+- **`domande`** → Lista di domande che compongono il quiz.
+- **`__init__()`** → Metodo costruttore per creare un quiz.
+- **`aggiungiDomanda()`** → Metodo per aggiungere domande al quiz.
+
+> Ci sono anche alcuni metodi commentati con `%%`, suggerendo diverse possibili implementazioni.
+
+---
+
+## 4. Differenze tra le soluzioni proposte per `Quiz`
+Sono presenti diverse implementazioni per la creazione di un quiz:
+1. **Soluzione 1** (commentata) → Costruttore che accetta una lista di domande direttamente.
+2. **Soluzione 2** → Costruttore semplice che crea un quiz vuoto.
+3. **Soluzione 3** → Metodo per aggiungere una domanda direttamente specificando i parametri della domanda.
+
+
 
